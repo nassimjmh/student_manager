@@ -16,37 +16,28 @@ void printAndFreeResults(char** results) {
         printf("Aucun résultat retourné.\n");
         return;
     }
-
     for (int i = 0; i < SIZE_TOP1; i++) {
-        // On affiche seulement si la chaîne existe
         if (results[i] != NULL) {
             printf("[%d] %s\n", i + 1, results[i]);
-            
-            // IMPORTANT : On libère la chaîne individuelle
             free(results[i]);
         }
     }
-    // IMPORTANT : On libère le tableau lui-même
     free(results);
 }
 
 int main(int argc, char* argv[]) {
     char* dataFile = "data.txt";
-    
     if (argc > 1) {
         dataFile = argv[1];
     }
-    
-    printf("=== Student Management System ===\n");
-    printf("Loading data from %s...\n\n", dataFile);
-    
+
     Prom* prom = loadFile(dataFile);
     if (prom == NULL) {
         fprintf(stderr, "Error: Failed to load data file\n");
         return -1;
     }
     
-    // --- Test Sauvegarde Binaire ---
+    // Test Sauvegarde Binaire
     printf("\nTesting Binary Save/Load\n");
     if (saveProm(prom, "bin/prom.bin") == 0) {
         Prom* prom2 = loadProm("bin/prom.bin");
@@ -56,45 +47,48 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // --- Initialisation de la structure CLASS_DATA ---
+    // Initialisation de la structure CLASS_DATA
     CLASS_DATA* classData = malloc(sizeof(CLASS_DATA));
     if (classData == NULL) {
         destroyProm(prom);
         return -1;
     }
     classData->prom = prom;
-    classData->currentCompareFunction = NULL; // Pas de tri par défaut
+    classData->currentCompareFunction = NULL; 
+    if (classData->prom == NULL) {
+        free(classData);
+        destroyProm(prom);
+        return -1;
+    }
+    printf("\nTOP %d - GENERAL\n", SIZE_TOP1);
+    char** topGeneral = getTopStudents(classData->prom, SIZE_TOP1);
+    printAndFreeResults(topGeneral);
 
-    if (classData->prom != NULL) {
-        
-        // TEST 1 : Tri Alphabetique (Via API char**)
-        printf("\n=== Test 1 : Tri Alphabetique (Nom) ===\n");
-        
-        // 1. Choix du mode
-        API_set_sorting_mode(classData, ALPHA_FIRST_NAME); 
-        
-        // 2. Récupération des chaînes générées dynamiquement
-        char** namesList = API_sort_students(classData);
-        
-        // 3. Affichage et nettoyage
-        printAndFreeResults(namesList);
+    printf("\nTOP %d - MATHÉMATIQUES\n", SIZE_TOP1);
+    char** topMaths = getTopInCourse(classData->prom, "Mathematiques", SIZE_TOP1);
+    printAndFreeResults(topMaths); 
 
 
-        // TEST 2 : Tri par MOYENNE (Via API char**)
-        printf("\n=== Test 2 : Tri par Moyenne ===\n");
         
-        API_set_sorting_mode(classData, AVERAGE);
-        char** avgList = API_sort_students(classData);
-        printAndFreeResults(avgList);
+    printf("\nTest 1 : Tri Alphabetique (Prenom) ===\n");
+    API_set_sorting_mode(classData, ALPHA_FIRST_NAME); 
+    char** namesList = API_sort_students(classData);
+    printAndFreeResults(namesList);
 
+    printf("\nTest 2 : Tri Alphabetique (Nom) ===\n");
+    API_set_sorting_mode(classData, ALPHA_LAST_NAME);
+    char** surnamesList = API_sort_students(classData);
+    printAndFreeResults(surnamesList);
 
-        // TEST 3 : Tri par Note MINIMUM (Via API char**)
-        printf("\n=== Test 3 : Tri par Note Minimale ===\n");
-        
-        API_set_sorting_mode(classData, MINIMUM);
-        char** minList = API_sort_students(classData);
-        printAndFreeResults(minList);
-    }   
+    printf("\nTest 3 : Tri par Moyenne\n");
+    API_set_sorting_mode(classData, AVERAGE);
+    char** avgList = API_sort_students(classData);
+    printAndFreeResults(avgList);
+
+    printf("\nTest 4 : Tri par Note Minimale\n"); 
+    API_set_sorting_mode(classData, MINIMUM);
+    char** minList = API_sort_students(classData);
+    printAndFreeResults(minList);
 
     API_set_sorting_mode(classData, ALPHA_LAST_NAME); // Juste pour avoir dans l'ordre alphabétique
     char** tempList = API_sort_students(classData);
@@ -109,23 +103,13 @@ int main(int argc, char* argv[]) {
         }
     API_display_results_per_field(classData);
 
-    printf("\n=== TOP 5 - MATHÉMATIQUES ===\n");
-    char** topMaths = getTopInCourse(prom, "Mathematiques", SIZE_TOP1);
-    printAndFreeResults(topMaths); // Ta fonction gère l'affichage et le free
 
-    printf("\n=== TOP 10 - GÉNÉRAL ===\n");
-    char** topGeneral = getTopStudents(prom, SIZE_TOP1);
-    printAndFreeResults(topGeneral);
-        
     // --- Nettoyage Final ---
     printf("\n=== Cleanup ===\n");
     
-    // On libère la structure d'enveloppe
     if (classData != NULL) {
         free(classData);
     }
-    
-    // On libère les données réelles (la promo)
     destroyProm(prom);
     
     printf("All memory freed successfully.\n");
