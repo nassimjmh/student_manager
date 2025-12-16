@@ -3,13 +3,13 @@
 #include "../include/display.h"
 #include "../include/parser.h"
 
-void displayStudent(Student* student) {
+void displayStudent(Student* student, int details) {
     if (student == NULL) {
         fprintf(stderr, "Error: Cannot display NULL student\n");
         return;
     }
     
-    printf("Name: %s %s   ", student->name, student->surname);
+    printf("\nName: %s %s   ", student->name, student->surname);
     printf("Overall Average: %.2f/20\n", student->avg);
     printf("\nCourses:\n");
     
@@ -20,17 +20,19 @@ void displayStudent(Student* student) {
         if (c->grades == NULL || c->grades->size == 0) {
             printf("No grades\n");
         } else {
-            printf("Average %.2f/20 (", c->avg);
-            for (int j = 0; j < c->grades->size; j++) {
-                printf("%.1f", c->grades->data[j]);
-                if (j < c->grades->size - 1) printf(", ");
+            printf("Average %.2f/20 | ", c->avg);
+            if (details) {
+                for (int j = 0; j < c->grades->size; j++) {
+                    printf("%.1f", c->grades->data[j]);
+                    if (j < c->grades->size - 1) printf(", ");
+                }
             }
-            printf(")\n");
+            printf("\n");
         }
     }
 }
 
-void displayProm(Prom* prom) {
+void displayProm(Prom* prom, int details) {
     if (prom == NULL) {
         fprintf(stderr, "Error: Cannot display NULL cohort\n");
         return;
@@ -41,11 +43,11 @@ void displayProm(Prom* prom) {
     printf("######################################\n");
     
     for (int i = 0; i < prom->number; i++) {
-        displayStudent(&prom->students[i]);
+        displayStudent(&prom->students[i], details);
     }
 }
 
-void displayFirstStudents(Prom* prom, int n) {
+void displayFirstStudents(Prom* prom, int n, int details) {
     if (prom == NULL) {
         fprintf(stderr, "Error: Cannot display NULL cohort\n");
         return;
@@ -54,11 +56,11 @@ void displayFirstStudents(Prom* prom, int n) {
     printf("\n DISPLAYING FIRST %d STUDENTS \n", n);
     
     for (int i = 0; i < n && i < prom->number; i++) {
-        displayStudent(&prom->students[i]);
+        displayStudent(&prom->students[i], details);
     }
 }
 
-void displayStudentById(Prom* prom, int id) {
+void displayStudentById(Prom* prom, int id, int details) {
     if (prom == NULL) {
         fprintf(stderr, "Error: Cannot display from NULL cohort\n");
         return;
@@ -71,10 +73,10 @@ void displayStudentById(Prom* prom, int id) {
         return;
     }
     
-    displayStudent(student);
+    displayStudent(student, details);
 }
 
-void displayStudentByName(Prom* prom, char* firstname, char* lastname) {
+void displayStudentByName(Prom* prom, char* firstname, char* lastname, int details) {
     if (prom == NULL || firstname == NULL || lastname == NULL) {
         fprintf(stderr, "Error: Invalid parameters\n");
         return;
@@ -87,7 +89,7 @@ void displayStudentByName(Prom* prom, char* firstname, char* lastname) {
         return;
     }
     
-    displayStudent(student);
+    displayStudent(student, details);
 }
 
 void displayTop10(Student* topStudents, int size) {

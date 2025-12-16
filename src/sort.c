@@ -105,7 +105,98 @@ char** API_sort_students(CLASS_DATA* pClass) {
     return result;
 }
 
+char** getTopStudents(Prom* prom, int n) {
+    if (prom == NULL || n <= 0) return NULL;
 
+    Student* copy = malloc(prom->number * sizeof(Student));
+    if (copy == NULL) return NULL;
+    memcpy(copy, prom->students, prom->number * sizeof(Student));
+
+    qsort(copy, prom->number, sizeof(Student), compareByAverage);
+
+    char** result = malloc(n * sizeof(char*));
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    int limit = (prom->number < n) ? prom->number : n;
+
+    for (int i = 0; i < n; i++) {
+        if (i < limit) {
+            result[i] = malloc(256 * sizeof(char));
+            if (result[i] != NULL) {
+                sprintf(result[i], "%s %s (Moyenne: %.2f/20)", 
+                        copy[i].surname, copy[i].name, copy[i].avg);
+            }
+        } else {
+            result[i] = NULL;
+        }
+    }
+
+    free(copy);
+    return result;
+}
+
+char** getTopInCourse(Prom* prom, char* courseName, int n) {
+    if (prom == NULL || courseName == NULL || n <= 0) return NULL;
+
+    typedef struct {
+        Student* student;
+        float courseAvg;
+    } StudentCourseAvg;
+
+    StudentCourseAvg* temp = malloc(prom->number * sizeof(StudentCourseAvg));
+    if (temp == NULL) return NULL;
+
+    int count = 0;
+    for (int i = 0; i < prom->number; i++) {
+        Course* course = findCourseByName(&prom->students[i], courseName);
+        if (course != NULL && course->grades != NULL && course->grades->size > 0) {
+            temp[count].student = &prom->students[i];
+            temp[count].courseAvg = course->avg;
+            count++;
+        }
+    }
+
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (temp[j].courseAvg > temp[i].courseAvg) {
+                StudentCourseAvg swap = temp[i];
+                temp[i] = temp[j];
+                temp[j] = swap;
+            }
+        }
+    }
+
+    char** result = malloc(n * sizeof(char*));
+    if (result == NULL) {
+        free(temp);
+        return NULL;
+    }
+
+    int limit = (count < n) ? count : n;
+
+    for (int i = 0; i < n; i++) {
+        if (i < limit) {
+            result[i] = malloc(256 * sizeof(char));
+            if (result[i] != NULL) {
+                Student* s = temp[i].student;
+                sprintf(result[i], "%s %s (%s: %.2f/20)", 
+                        s->surname, s->name, courseName, temp[i].courseAvg);
+            }
+        } else {
+            result[i] = NULL;
+        }
+    }
+
+    free(temp);
+    return result;
+}
+
+
+
+// J'utilise pas mais peut etre utilise en changeant plus tard
 Student* getTop10Students(Prom* prom, int* resultSize) {
     if (prom == NULL || resultSize == NULL) {
         fprintf(stderr, "Error: Invalid parameters for getTop10Students\n");

@@ -3,15 +3,15 @@
 
 #include "structures.h"
 
-void displayStudent(Student* student);
+void displayStudent(Student* student, int details);
 
-void displayProm(Prom* prom);
+void displayProm(Prom* prom, int details);
 
-void displayFirstStudents(Prom* prom, int n);
+void displayFirstStudents(Prom* prom, int n, int details);
 
-void displayStudentById(Prom* prom, int id);
+void displayStudentById(Prom* prom, int id, int details);
 
-void displayStudentByName(Prom* prom, char* firstname, char* lastname);
+void displayStudentByName(Prom* prom, char* firstname, char* lastname, int details);
 
 void displayTop10(Student* topStudents, int size);
 

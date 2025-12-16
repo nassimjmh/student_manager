@@ -5,11 +5,9 @@
 
 #define SIZE_TOP1 10
 
-Student* getTop10Students(Prom* prom, int* resultSize);
+char** getTopStudents(Prom* prom, int n);
 
-Student* getTop3InCourse(Prom* prom, char* courseName);
-
-int compareByAverage(const void* a, const void* b);
+char** getTopInCourse(Prom* prom, char* courseName, int n);
 
 // Change le mode de tri (Nom, Prénom, Moyenne, ou Note Min)
 int API_set_sorting_mode(CLASS_DATA* pClass, int mode);

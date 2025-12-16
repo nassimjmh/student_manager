@@ -109,8 +109,14 @@ int main(int argc, char* argv[]) {
         }
     API_display_results_per_field(classData);
 
-    displayStudentByName(classData->prom, "Beatrice", "Jorgensen");
+    printf("\n=== TOP 5 - MATHÉMATIQUES ===\n");
+    char** topMaths = getTopInCourse(prom, "Mathematiques", SIZE_TOP1);
+    printAndFreeResults(topMaths); // Ta fonction gère l'affichage et le free
 
+    printf("\n=== TOP 10 - GÉNÉRAL ===\n");
+    char** topGeneral = getTopStudents(prom, SIZE_TOP1);
+    printAndFreeResults(topGeneral);
+        
     // --- Nettoyage Final ---
     printf("\n=== Cleanup ===\n");
     
