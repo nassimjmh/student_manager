@@ -5,6 +5,7 @@
 #include "../include/save_load.h"
 #include "../include/display.h"
 #include "../include/sort.h"
+#include "../include/operations.h"
 
 // Sécurité au cas où SIZE_TOP1 n'est pas dans sort.h
 #ifndef SIZE_TOP1
@@ -60,6 +61,7 @@ int main(int argc, char* argv[]) {
         destroyProm(prom);
         return -1;
     }
+    /*
     printf("\nTOP %d - GENERAL\n", SIZE_TOP1);
     char** topGeneral = getTopStudents(classData->prom, SIZE_TOP1);
     printAndFreeResults(topGeneral);
@@ -110,6 +112,27 @@ int main(int argc, char* argv[]) {
     if (classData != NULL) {
         free(classData);
     }
+    */
+
+    // TEST NORMALISATION NOTES
+
+    Recalcul_data* recalculData = malloc(sizeof(Recalcul_data));
+    if (recalculData == NULL) {
+        return -1;
+    }
+
+    printf("\nAvant : Tri par Moyenne\n");
+    API_set_sorting_mode(classData, AVERAGE);
+    char** avgList = API_sort_students(classData);
+    printAndFreeResults(avgList);
+
+    miseAJourNotes(classData->prom, normalisation);
+
+    printf("\nAprès : Tri par Moyenne\n");
+    char** avgList2 = API_sort_students(classData);
+    printAndFreeResults(avgList2);
+
+
     destroyProm(prom);
     
     printf("All memory freed successfully.\n");

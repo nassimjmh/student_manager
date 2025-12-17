@@ -9,8 +9,11 @@ typedef struct recalcul {
     Recalcul func;
     float max;
     float min;
-} Recalcul;
+} Recalcul_data;
 
-int miseAJourNotes(Prom* prom, Recalcul* pRecalcul);
+int miseAJourNotes(Prom* prom, Recalcul_data* pRecalcul);
+
+Recalcul normalisation (Student* student, float max, float min);
+
 
 #endif /* OPERATIONS_H */
