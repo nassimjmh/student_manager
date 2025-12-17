@@ -120,13 +120,14 @@ int main(int argc, char* argv[]) {
     if (recalculData == NULL) {
         return -1;
     }
+    recalculData->func = normalisation;
 
     printf("\nAvant : Tri par Moyenne\n");
     API_set_sorting_mode(classData, AVERAGE);
     char** avgList = API_sort_students(classData);
     printAndFreeResults(avgList);
 
-    miseAJourNotes(classData->prom, normalisation);
+    miseAJourNotes(classData->prom, recalculData);
 
     printf("\nAprès : Tri par Moyenne\n");
     char** avgList2 = API_sort_students(classData);
