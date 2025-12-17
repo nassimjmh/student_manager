@@ -3,7 +3,7 @@
 
 #include "structures.h"
 
-typedef void (*Recalcul)(Student* student, int max, int min);
+typedef void (*Recalcul)(Student* student, float max, float min);
 
 typedef struct recalcul {
     Recalcul func;
@@ -13,7 +13,9 @@ typedef struct recalcul {
 
 int miseAJourNotes(Prom* prom, Recalcul_data* pRecalcul);
 
-Recalcul normalisation (Student* student, float max, float min);
+void normalisation (Student* student, float max, float min);
+
+char** listePrenoms(Prom* prom, int* taille);
 
 
 #endif /* OPERATIONS_H */

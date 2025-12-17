@@ -105,38 +105,31 @@ int main(int argc, char* argv[]) {
         }
     API_display_results_per_field(classData);
 
-
-    // --- Nettoyage Final ---
-    printf("\n=== Cleanup ===\n");
-    
-    if (classData != NULL) {
-        free(classData);
-    }
     */
 
     // TEST NORMALISATION NOTES
 
-    Recalcul_data* recalculData = malloc(sizeof(Recalcul_data));
-    if (recalculData == NULL) {
-        return -1;
-    }
-    recalculData->func = normalisation;
+    Recalcul_data data;
+    data.func = normalisation;
 
-    printf("\nAvant : Tri par Moyenne\n");
+    printf("\nAVANT : Tri par Moyenne\n");
     API_set_sorting_mode(classData, AVERAGE);
-    char** avgList = API_sort_students(classData);
-    printAndFreeResults(avgList);
+    printAndFreeResults(API_sort_students(classData));
 
-    miseAJourNotes(classData->prom, recalculData);
+    miseAJourNotes(classData->prom, &data);
 
-    printf("\nAprès : Tri par Moyenne\n");
-    char** avgList2 = API_sort_students(classData);
-    printAndFreeResults(avgList2);
+    printf("\nAPRES : Tri par Moyenne (Tout le monde est entre 0 et 20)\n");
+    printAndFreeResults(API_sort_students(classData));
 
+    int k = 0;
+    printf("\n%s",listePrenoms(classData->prom, &k)); 
 
+    if (classData != NULL) {
+        free(classData);
+    }
     destroyProm(prom);
     
-    printf("All memory freed successfully.\n");
+    printf("\nAll memory freed successfully.\n");
     printf("\nProgram completed successfully!\n");
     
     return 0;
